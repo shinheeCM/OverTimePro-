@@ -1,0 +1,21 @@
+/*
+/*/
+
+!.gitignore
+!/*.db
+!/*.js
+!/*.sh
+!/*.json
+!/*.md
+!/install
+!/mongo_db_manger
+!/public
+# !/node_modules
+!/maps
+!/bt_trees
+!/Dockerfile
+!/logger
+!/modules
+!/docker-compose.yaml
+!/support_ws
+!/path.py

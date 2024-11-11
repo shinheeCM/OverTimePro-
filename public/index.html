@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Records</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Employee Records</h1>
+
+    <form id="employee-form">
+        <input type="text" id="name" placeholder="Employee Name" required />
+        <input type="text" id="position" placeholder="Position" required />
+        <input type="number" id="overtime" placeholder="Overtime Hours" required />
+        <input type="datetime-local" id="inTime" placeholder="Clock In" required />
+        <input type="datetime-local" id="outTime" placeholder="Clock Out" required />
+        <button type="submit">Add Employee</button>
+    </form>
+
+    <h2>All Employees</h2>
+    <table id="employee-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Position</th>
+                <th>Overtime Hours</th>
+                <th>In Time</th>
+                <th>Out Time</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Fetch and display employees from the backend
+        async function fetchEmployees() {
+            try {
+                const response = await fetch('/employees');
+                const data = await response.json();
+                const tableBody = document.querySelector('#employee-table tbody');
+                tableBody.innerHTML = '';
+                data.data.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${employee.name}</td>
+                        <td>${employee.position}</td>
+                        <td>${employee.overtime}</td>
+                        <td>${new Date(employee.inTime).toLocaleString()}</td>
+                        <td>${new Date(employee.outTime).toLocaleString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        }
+
+        // Add a new employee
+        document.getElementById('employee-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const position = document.getElementById('position').value;
+            const overtime = document.getElementById('overtime').value;
+            const inTime = document.getElementById('inTime').value;
+            const outTime = document.getElementById('outTime').value;
+
+            const employee = { name, position, overtime, inTime, outTime };
+            try {
+                const response = await fetch('/employee', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(employee),
+                });
+                const data = await response.json();
+                if (data.message) {
+                    alert(data.message);
+                    fetchEmployees();  // Re-fetch and update employee table
+                }
+            } catch (error) {
+                console.error('Error adding employee:', error);
+            }
+        });
+
+        // Initial fetch of employee records
+        fetchEmployees();
+    </script>
+</body>
+</html>
