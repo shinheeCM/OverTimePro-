@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mongodb_server_erp: 
+    image: wonbot/shinheeagv:mongodb
+    container_name: mongodb_server_erp
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: wonbotOt
+      MONGO_INITDB_ROOT_PASSWORD: wonbotOt
+    ports:
+      - 27014:27017
+    volumes:
+      - /shinhee_erp:/data/db
+    restart: always
+
+  overtime-tracking:
+    image: wonbot/shinheeagv:overtime-tracking
+    container_name: overtime-tracking
+    environment:
+      MONGO_URI='mongodb://wonbotOt:wonbotOt@localhost:27014'
+    ports:
+      - 2900:3000
+    depends_on:
+      - mongodb_server_erp
+    restart: always

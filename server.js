@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -12,12 +13,18 @@ app.use(bodyParser.json());
 // Serve static files (like HTML, CSS, and JS)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Connect to MongoDB
-const mongoURI = 'mongodb://wonbotFms:wonbotFms@localhost:27015';
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
-  .catch((err) => console.error('Failed to connect to MongoDB:', err));
+const mongoURI = process.env.MONGO_URI;
 
+const connectWithRetry = () => {
+  mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => {
+      console.error('Failed to connect to MongoDB, retrying in 5 seconds...', err);
+      setTimeout(connectWithRetry, 5000); // Retry after 5 seconds
+    });
+};
+
+connectWithRetry();
 // Define Employee schema with In and Out time
 const employeeSchema = new mongoose.Schema({
   name: String,
