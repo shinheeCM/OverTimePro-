@@ -59,6 +59,24 @@ app.get('/employees', async (req, res) => {
   }
 });
 
+// Endpoint to delete an employee record by ID
+app.delete('/employee/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      const employee = await Employee.findByIdAndDelete(id);
+      
+      if (!employee) {
+        return res.status(404).json({ message: 'Employee not found' });
+      }
+  
+      res.status(200).json({ message: 'Employee record deleted successfully' });
+    } catch (error) {
+      res.status(400).json({ message: 'Error deleting employee', error: error.message });
+    }
+  });
+  
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
