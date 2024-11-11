@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee OT Records</title>
+    <title>Employee Records</title>
     <style>
         table {
             width: 100%;
@@ -34,7 +34,7 @@
     <form id="employee-form">
         <input type="text" id="name" placeholder="Employee Name" required />
         <input type="text" id="position" placeholder="Position" required />
-        <input type="number" id="overtime" placeholder="Overtime Hours" required />
+        <input type="number" id="overtime" placeholder="Overtime Hours" readonly />
         <input type="datetime-local" id="inTime" placeholder="Clock In" required />
         <input type="datetime-local" id="outTime" placeholder="Clock Out" required />
         <button type="submit">Add Employee</button>
@@ -56,6 +56,23 @@
     </table>
 
     <script>
+        // Function to calculate hours worked
+        function calculateOvertime() {
+            const inTime = document.getElementById('inTime').value;
+            const outTime = document.getElementById('outTime').value;
+
+            if (inTime && outTime) {
+                const inDate = new Date(inTime);
+                const outDate = new Date(outTime);
+                const diff = (outDate - inDate) / 1000 / 60 / 60;  // Difference in hours
+                document.getElementById('overtime').value = diff.toFixed(2);  // Set overtime hours
+            }
+        }
+
+        // Add event listeners to recalculate overtime when time changes
+        document.getElementById('inTime').addEventListener('change', calculateOvertime);
+        document.getElementById('outTime').addEventListener('change', calculateOvertime);
+
         // Fetch and display employees from the backend
         async function fetchEmployees() {
             try {
