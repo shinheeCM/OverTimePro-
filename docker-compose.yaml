@@ -5,8 +5,8 @@ services:
     image: wonbot/shinheeagv:mongodb
     container_name: mongodb_server_erp
     environment:
-      MONGO_INITDB_ROOT_USERNAME: wonbotOt
-      MONGO_INITDB_ROOT_PASSWORD: wonbotOt
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - 27014:27017
     volumes:
@@ -16,10 +16,12 @@ services:
   overtime-tracking:
     image: wonbot/shinheeagv:overtime-tracking
     container_name: overtime-tracking
+    env_file:
+      - .env
     environment:
-      MONGO_URI='mongodb://wonbotOt:wonbotOt@localhost:27014'
+      - MONGO_URI=${MONGO_URI}
     ports:
-      - 2900:3000
+      - 3000:3000
     depends_on:
       - mongodb_server_erp
     restart: always
