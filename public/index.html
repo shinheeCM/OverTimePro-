@@ -21,13 +21,14 @@
             font-size: 2.5em;
             color: #333;
         }
+
+        /* Centering <h2> */
         h2 {
             text-align: center;
             margin-top: 20px;
             font-size: 2em;
             color: #333;
         }
-
 
         /* Card Style for Form */
         #employee-form {
@@ -195,6 +196,8 @@
         <tbody></tbody>
     </table>
 
+    <button onclick="exportTableToCSV()">Download CSV</button>
+
     <script>
         // Function to calculate hours worked
         function calculateOvertime() {
@@ -284,8 +287,78 @@
             }
         }
 
-        // Initial call to fetch and display employees when the page loads
-        fetchEmployees();
+        // Export table data to CSV with column headers
+
+        function exportTableToCSV() {
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tr');
+            const csvData = [];
+
+            // Extract column headers and rename them
+            const headers = ['name', 'position', 'date_in', 'time_in', 'date_out', 'time_out'];
+            csvData.push(headers.join(','));  // Add headers as the first row
+
+            // Extract data rows and format accordingly
+            rows.forEach((row, index) => {
+                if (index > 0) { // Skip the header row
+                    const cols = row.querySelectorAll('td');
+                    const rowData = [];
+
+                    // Add Name and Position
+                    rowData.push(cols[0].innerText.trim());  // Name
+                    rowData.push(cols[1].innerText.trim());  // Position
+
+                    // Split In Time and Out Time into date and time columns
+                    const inTime = new Date(cols[3].innerText);
+                    const outTime = new Date(cols[4].innerText);
+
+                    // Push Date and Time separately
+                    rowData.push(inTime.toLocaleDateString());  // Date In
+                    rowData.push(inTime.toLocaleTimeString());  // Time In
+                    rowData.push(outTime.toLocaleDateString()); // Date Out
+                    rowData.push(outTime.toLocaleTimeString()); // Time Out
+
+                    // Push the row data to csvData (excluding Delete column)
+                    csvData.push(rowData.join(','));
+                }
+            });
+
+            // Create the CSV file
+            const csvContent = csvData.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'employee_records.csv';
+            link.click();
+        }
+
+        // Fetch employees and populate the table
+        async function fetchEmployees() {
+            try {
+                const response = await fetch('/employees');
+                const data = await response.json();
+                const tableBody = document.querySelector('#employee-table tbody');
+                tableBody.innerHTML = '';
+
+                data.data.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${employee.name}</td>
+                        <td>${employee.position}</td>
+                        <td>${employee.overtime}</td>
+                        <td>${new Date(employee.inTime).toLocaleString()}</td>
+                        <td>${new Date(employee.outTime).toLocaleString()}</td>
+                        <td><button onclick="deleteEmployee('${employee._id}')">Delete</button></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching employees:', error);
+            }
+        }
+
+
+        fetchEmployees();  // Initial fetch to load employee data
     </script>
 </body>
 </html>
