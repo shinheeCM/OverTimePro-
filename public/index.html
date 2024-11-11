@@ -298,6 +298,7 @@
             const headers = [
                 'Name (이름)', 
                 'Position (직위)', 
+                'Overtime Hours (초과 근무 시간)', 
                 'Date In (입력 날짜)', 
                 'Time In (입력 시간)', 
                 'Date Out (출력 날짜)', 
@@ -314,6 +315,9 @@
                     // Add Name and Position
                     rowData.push(cols[0].innerText.trim());  // Name (이름)
                     rowData.push(cols[1].innerText.trim());  // Position (직위)
+
+                    // Add Overtime Hours
+                    rowData.push(cols[2].innerText.trim());  // Overtime Hours (초과 근무 시간)
 
                     // Split In Time and Out Time into date and time columns
                     const inTime = new Date(cols[3].innerText);
