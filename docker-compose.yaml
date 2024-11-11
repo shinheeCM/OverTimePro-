@@ -21,7 +21,7 @@ services:
     environment:
       - MONGO_URI=${MONGO_URI}
     ports:
-      - 3000:3000
+      - 4000:3000
     depends_on:
       - mongodb_server_erp
     restart: always
