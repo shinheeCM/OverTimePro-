@@ -47,6 +47,7 @@ app.post('/employee', async (req, res) => {
     inTime: new Date(inTime),  // Store inTime as Date
     outTime: new Date(outTime)  // Store outTime as Date
   });
+  
 
   try {
     await newEmployee.save();

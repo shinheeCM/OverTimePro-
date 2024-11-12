@@ -217,6 +217,7 @@
         document.getElementById('outTime').addEventListener('change', calculateOvertime);
 
         // Fetch and display employees from the backend
+        // Fetch and display employees from the backend
         async function fetchEmployees() {
             try {
                 const response = await fetch('/employees');
@@ -225,12 +226,23 @@
                 tableBody.innerHTML = '';
                 data.data.forEach(employee => {
                     const row = document.createElement('tr');
+                    
+                    // Create local date and time format for inTime and outTime
+                    const inTime = new Date(employee.inTime);
+                    const outTime = new Date(employee.outTime);
+                    
+                    // Format to local date and time
+                    const inDate = inTime.toLocaleDateString(); // Local date
+                    const inTimeStr = inTime.toLocaleTimeString(); // Local time
+                    const outDate = outTime.toLocaleDateString(); // Local date
+                    const outTimeStr = outTime.toLocaleTimeString(); // Local time
+
                     row.innerHTML = `
                         <td>${employee.name}</td>
                         <td>${employee.position}</td>
                         <td>${employee.overtime}</td>
-                        <td>${new Date(employee.inTime).toLocaleString()}</td>
-                        <td>${new Date(employee.outTime).toLocaleString()}</td>
+                        <td>${inDate} ${inTimeStr}</td>  <!-- In Time: Local Date & Time -->
+                        <td>${outDate} ${outTimeStr}</td>  <!-- Out Time: Local Date & Time -->
                         <td><button onclick="deleteEmployee('${employee._id}')">Delete</button></td>
                     `;
                     tableBody.appendChild(row);
@@ -239,6 +251,7 @@
                 console.error('Error fetching employees:', error);
             }
         }
+
 
         // Add a new employee
         document.getElementById('employee-form').addEventListener('submit', async (e) => {
@@ -299,9 +312,9 @@
                 'Name (이름)', 
                 'Position (직위)', 
                 'Overtime Hours (초과 근무 시간)', 
-                'Date In (입력 날짜)', 
+                'Date In (입력 날짜) (mm/dd/yyyy)',
                 'Time In (입력 시간)', 
-                'Date Out (출력 날짜)', 
+                'Date Out (출력 날짜) (mm/dd/yyyy)', 
                 'Time Out (출력 시간)'
             ];
             csvData.push(headers.join(','));  // Add headers as the first row
