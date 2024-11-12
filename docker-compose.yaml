@@ -11,6 +11,8 @@ services:
       - 27014:27017
     volumes:
       - /shinhee_erp:/data/db
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     restart: always
 
   overtime-tracking:
@@ -20,8 +22,12 @@ services:
       - .env
     environment:
       - MONGO_URI=${MONGO_URI}
+      - TZ=Asia/Seoul
     ports:
       - 4000:3000
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     depends_on:
       - mongodb_server_erp
     restart: always
