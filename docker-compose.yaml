@@ -20,8 +20,10 @@ services:
       - .env
     environment:
       - MONGO_URI=${MONGO_URI}
-    ports:
-      - 4000:3000
+    network_mode: host
+    ipc: host
+    # ports:
+    #   - 4000:3000
     depends_on:
       - mongodb_server_erp
     restart: always
